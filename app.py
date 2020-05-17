@@ -44,11 +44,11 @@ def init_empty_db():
 
 def show_departments(limit=10):
     query = Department.select().limit(limit)
-    departments_list = query.dicts().execute()
+    departments_list = query.execute()
 
     print('The departments are:')
     for department in departments_list:
-        print(f'{department.get("name")} ({department.get("department_id")})')
+        print(department)
 
     if not len(departments_list):
         print('Departments list is empty.\n')
@@ -70,21 +70,54 @@ def select_department():
         print('Wrong department Id.')
         return
 
-    # TODO Add department menu.
-    # 1 - employee list
-    # 2 - add employee
-    # 4 - remove employee from department
+    while True:
+        try:
+            user_input = int(input(
+                '''What operation would you like to do?
+                1 - Show a list of employees
+                2 - Add an employee to the list
+                3 - Remove an employee from the list
+                10 - Back
+                You choose: '''))
 
+            if user_input == 1:
+                show_employees_from_department(department)
+            elif user_input == 2:
+                add_employee_to_department(department)
+            elif user_input == 3:
+                change_employee_department(None)
+            elif user_input == 10:
+                break
+            else:
+                select_department()
+        except ValueError as exp:
+            select_department()
+
+
+def show_employees_from_department(department: Department):
     query = Employee.select().where(Employee.department == department.department_id)
-    employees_list = query.dicts().execute()
+    employees_list = query.execute()
 
     if not len(employees_list):
-        print('The employee list is empty.\n')
+        print('The employee list is empty.')
         return
 
     print(f'The employee list for {department.name} department is:')
     for employee in employees_list:
-        print(f'{employee.get("first_name")} {employee.get("last_name")} {employee.get("position")}')
+        print(employee)
+
+
+def add_employee_to_department(department: Department):
+    first_name = input('What is an employee first name? ')
+    last_name = input('What is an employee last name? ')
+    position = input('What is an employee position? ')
+    Employee.create(first_name=first_name, last_name=last_name, position=position, department=department)
+
+
+def change_employee_department(department: Department | None):
+    employee = Employee(department=department)
+    employee.id = int(input('What is an employee Id to update? '))
+    employee.save()
 
 
 start()
