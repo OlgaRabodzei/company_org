@@ -1,22 +1,11 @@
-class Department:
+from peewee import *
 
-    def __init__(self, name, employees=None):
-        self._name = str(name)
-        self._employees = employees
-        if employees is None:
-            self._employees = []
 
-    def __repr__(self):
-        return '<Department: %s ("%s")>' % (self.__class__.__name__, self._name)
+class Department(Model):
 
-    def __str__(self):
-        return f'{self._name} ({len(self._employees)})'
+    department_id = AutoField(column_name='DepartmentId')
+    name = TextField(column_name='Name')
 
-    def add_employee(self):
-        pass
-
-    def delete_employee(self, employee_id):
-        pass
-
-    def list_employee(self):
-        pass
+    class Meta:
+        database = SqliteDatabase('company_org.sqlite')
+        table_name = 'Department'
