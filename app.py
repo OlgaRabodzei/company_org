@@ -1,9 +1,10 @@
 import logging
 import sys
-from peewee import *
 
 from model.department import Department
 from model.employee import Employee
+
+from database_connection import *
 
 # TODO: Update it to file logging.
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
@@ -11,7 +12,6 @@ log = logging.getLogger('__main__')
 
 
 def start():
-    init_empty_db()
     while True:
         try:
             user_input = int(input(
@@ -33,13 +33,6 @@ def start():
                 start()
         except ValueError as exp:
             start()
-
-
-def init_empty_db():
-    database = SqliteDatabase('company_org.sqlite')
-    if not len(database.get_tables()):
-        database.init('company_org.sqlite')
-        database.create_tables([Employee, Department])
 
 
 def show_departments(limit=10):
@@ -114,10 +107,10 @@ def add_employee_to_department(department: Department):
     Employee.create(first_name=first_name, last_name=last_name, position=position, department=department)
 
 
-def change_employee_department(department: Department | None):
-    employee = Employee(department=department)
-    employee.id = int(input('What is an employee Id to update? '))
-    employee.save()
+# def change_employee_department(department: Department | None):
+#     employee = Employee(department=department)
+#     employee.id = int(input('What is an employee Id to update? '))
+#     employee.save()
 
 
 start()
