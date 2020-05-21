@@ -25,8 +25,11 @@ class EmployeeTest(unittest.TestCase):
         department = Department.create(name='TestDepartment')
         employee.department = department
         employee.save()
+        # Test adding department.
+        employee = Employee.get(Employee.id == self._employee_id)
         self.assertEqual(employee.department, department)
-        # TODO check this test
-        department.delete_instance()
+        # Test removing department.
+        department.delete_instance(recursive=True)
+        employee = Employee.get(Employee.id == self._employee_id)
         self.assertFalse(employee.department)
 
